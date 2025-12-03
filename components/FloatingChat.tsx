@@ -18,6 +18,7 @@ export default function FloatingChat() {
   const { messages: contextMessages, isOpen, setIsOpen, addMessage } = useChat();
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isAutoScrolling, setIsAutoScrolling] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Convertir mensajes del contexto al formato esperado
@@ -77,10 +78,14 @@ export default function FloatingChat() {
             router.push(data.navigationIntent.target);
             // Start auto-scroll tour after navigation
             setTimeout(() => {
+              setIsAutoScrolling(true);
               startAutoScroll({
-                duration: 8000, // 8 seconds tour
+                duration: 11000, // 11 seconds tour (1/3 slower)
                 pauseAtEnd: 1500,
-                delay: 500
+                delay: 500,
+                onComplete: () => {
+                  setIsAutoScrolling(false);
+                }
               });
             }, 500);
           }, 1000);
@@ -125,7 +130,8 @@ export default function FloatingChat() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200">
+        <div className={`fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200 transition-all duration-500 ${isAutoScrolling ? 'opacity-40 backdrop-blur-sm' : 'opacity-100'
+          }`}>
           {/* Header */}
           <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-t-2xl">
             <div className="flex items-center justify-between">
@@ -160,8 +166,8 @@ export default function FloatingChat() {
               >
                 <div
                   className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${message.role === 'user'
-                      ? 'bg-secondary-500'
-                      : 'bg-primary-500'
+                    ? 'bg-secondary-500'
+                    : 'bg-primary-500'
                     }`}
                 >
                   {message.role === 'user' ? (
@@ -172,8 +178,8 @@ export default function FloatingChat() {
                 </div>
                 <div
                   className={`max-w-[75%] rounded-2xl px-4 py-2 ${message.role === 'user'
-                      ? 'bg-secondary-500 text-white'
-                      : 'bg-white text-gray-900 shadow-sm border border-gray-200'
+                    ? 'bg-secondary-500 text-white'
+                    : 'bg-white text-gray-900 shadow-sm border border-gray-200'
                     }`}
                 >
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
