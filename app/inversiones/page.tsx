@@ -2,7 +2,6 @@
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import FloatingChat from '@/components/FloatingChat';
 import Link from 'next/link';
 import { ArrowRight, TrendingUp } from 'lucide-react';
 
@@ -223,7 +222,6 @@ export default function InversionesPage() {
       </main>
 
       <Footer />
-      <FloatingChat />
     </div>
   );
 }

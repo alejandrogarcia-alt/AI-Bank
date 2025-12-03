@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import FloatingChat from '@/components/FloatingChat';
 import { User, Mail, Phone, Lock, CreditCard, MapPin } from 'lucide-react';
 
 export default function RegistroPage() {
@@ -92,7 +91,6 @@ export default function RegistroPage() {
           </div>
         </main>
         <Footer />
-        <FloatingChat />
       </div>
     );
   }
@@ -444,7 +442,6 @@ export default function RegistroPage() {
       </main>
 
       <Footer />
-      <FloatingChat />
     </div>
   );
 }

@@ -2,7 +2,6 @@
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import FloatingChat from '@/components/FloatingChat';
 import Link from 'next/link';
 import { ArrowRight, Check } from 'lucide-react';
 
@@ -217,7 +216,6 @@ export default function TarjetasPage() {
       </main>
 
       <Footer />
-      <FloatingChat />
     </div>
   );
 }

@@ -2,7 +2,6 @@
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import FloatingChat from '@/components/FloatingChat';
 import Link from 'next/link';
 import { ArrowRight, Shield } from 'lucide-react';
 
@@ -206,7 +205,6 @@ export default function SegurosPage() {
       </main>
 
       <Footer />
-      <FloatingChat />
     </div>
   );
 }

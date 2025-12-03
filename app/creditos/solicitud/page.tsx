@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import FloatingChat from '@/components/FloatingChat';
 import { CreditFormData } from '@/types';
 
 export default function CreditApplicationPage() {
@@ -79,7 +78,6 @@ export default function CreditApplicationPage() {
           </div>
         </main>
         <Footer />
-        <FloatingChat onFormFill={handleFormFill} />
       </div>
     );
   }
@@ -302,7 +300,6 @@ export default function CreditApplicationPage() {
       </main>
 
       <Footer />
-      <FloatingChat onFormFill={handleFormFill} />
     </div>
   );
 }

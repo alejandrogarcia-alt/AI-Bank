@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import FloatingChat from '@/components/FloatingChat';
 import { bankSections, bankProducts } from '@/lib/bankData';
 import Link from 'next/link';
 import { ArrowRight, Sparkles, Shield, Zap, Clock } from 'lucide-react';
@@ -195,7 +194,6 @@ export default function Home() {
       </main>
 
       <Footer />
-      <FloatingChat />
     </div>
   );
 }

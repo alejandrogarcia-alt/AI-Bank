@@ -2,28 +2,29 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Send, Bot, User, X, MessageCircle, Minimize2 } from 'lucide-react';
-import { Message } from '@/types';
+import { Send, Bot, User, MessageCircle, Minimize2 } from 'lucide-react';
+import { useChat } from '@/contexts/ChatContext';
 
-interface FloatingChatProps {
-  onNavigate?: (path: string) => void;
-  onFormFill?: (formData: any) => void;
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp?: Date;
+  navigationIntent?: any;
 }
 
-export default function FloatingChat({ onNavigate, onFormFill }: FloatingChatProps) {
+export default function FloatingChat() {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: '¡Hola! Soy tu asistente virtual de Multiplica Bank. Puedo ayudarte a:\n\n• Navegar por el sitio\n• Encontrar productos financieros\n• Pre-llenar formularios de crédito\n• Comparar opciones de inversión\n• Resolver dudas sobre nuestros servicios\n\n¿En qué puedo ayudarte hoy?',
-      timestamp: new Date(),
-    },
-  ]);
+  const { messages: contextMessages, isOpen, setIsOpen, addMessage } = useChat();
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Convertir mensajes del contexto al formato esperado
+  const messages: Message[] = contextMessages.map((msg) => ({
+    role: msg.role,
+    content: msg.content,
+    timestamp: new Date(),
+  }));
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -36,14 +37,13 @@ export default function FloatingChat({ onNavigate, onFormFill }: FloatingChatPro
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
+    // Add user message
+    addMessage({
       role: 'user',
       content: input,
-      timestamp: new Date(),
-    };
+    });
 
-    setMessages((prev) => [...prev, userMessage]);
+    const currentInput = input;
     setInput('');
     setIsLoading(true);
 
@@ -54,49 +54,40 @@ export default function FloatingChat({ onNavigate, onFormFill }: FloatingChatPro
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: input,
+          message: currentInput,
           context: 'bank',
         }),
       });
 
       const data = await response.json();
 
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
+      // Add assistant message
+      addMessage({
         role: 'assistant',
         content: data.response,
-        timestamp: new Date(),
-        navigationIntent: data.navigationIntent,
-        formData: data.formData,
-      };
+      });
 
-      setMessages((prev) => [...prev, assistantMessage]);
-
-      // Manejar intenciones de navegación
+      // Handle navigation
       if (data.navigationIntent) {
         if (data.navigationIntent.action === 'navigate' && data.navigationIntent.target) {
-          // Esperar 1 segundo antes de navegar para que el usuario vea la respuesta
+          // Wait 1 second before navigating so user can see the response
           setTimeout(() => {
             router.push(data.navigationIntent.target);
-            if (onNavigate) {
-              onNavigate(data.navigationIntent.target);
-            }
           }, 1000);
         } else if (data.navigationIntent.action === 'fillForm' && data.formData) {
-          if (onFormFill) {
-            onFormFill(data.formData);
-          }
+          // Navigate to the form with data
+          setTimeout(() => {
+            router.push(data.navigationIntent.target);
+            // TODO: Pass form data via URL params or localStorage
+          }, 1000);
         }
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
+      addMessage({
         role: 'assistant',
         content: 'Lo siento, tuve un problema procesando tu mensaje. Por favor intenta de nuevo.',
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      });
     } finally {
       setIsLoading(false);
     }
@@ -115,7 +106,7 @@ export default function FloatingChat({ onNavigate, onFormFill }: FloatingChatPro
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-primary-500 to-secondary-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center z-50 animate-bounce-chat"
+          className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-primary-500 to-secondary-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center z-50 hover:scale-110"
           aria-label="Abrir chat"
         >
           <MessageCircle className="w-6 h-6" />
@@ -124,7 +115,7 @@ export default function FloatingChat({ onNavigate, onFormFill }: FloatingChatPro
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 animate-slideUp border border-gray-200">
+        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200">
           {/* Header */}
           <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-t-2xl">
             <div className="flex items-center justify-between">
@@ -134,7 +125,7 @@ export default function FloatingChat({ onNavigate, onFormFill }: FloatingChatPro
                 </div>
                 <div>
                   <h2 className="text-white font-semibold">Asistente Multiplica</h2>
-                  <p className="text-primary-100 text-xs">En línea</p>
+                  <p className="text-primary-100 text-xs">En línea • Contexto persistente</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -151,9 +142,9 @@ export default function FloatingChat({ onNavigate, onFormFill }: FloatingChatPro
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-            {messages.map((message) => (
+            {messages.map((message, index) => (
               <div
-                key={message.id}
+                key={index}
                 className={`flex gap-3 ${
                   message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
                 }`}
@@ -179,11 +170,6 @@ export default function FloatingChat({ onNavigate, onFormFill }: FloatingChatPro
                   }`}
                 >
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  {message.navigationIntent && message.navigationIntent.action === 'navigate' && (
-                    <div className="mt-2 text-xs opacity-75">
-                      Navegando a {message.navigationIntent.target}...
-                    </div>
-                  )}
                 </div>
               </div>
             ))}
