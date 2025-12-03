@@ -25,6 +25,12 @@ export const validUrls: ValidUrl[] = [
     keywords: ['créditos', 'crédito personal', 'hipotecario', 'automotriz', 'pyme', 'préstamos', 'financiamiento'],
   },
   {
+    path: '/creditos#calculadora',
+    title: 'Calculadora de Crédito',
+    description: 'Simulador de crédito - Calcula tu pago mensual según monto y plazo deseado',
+    keywords: ['calculadora', 'simular crédito', 'calcular pago', 'simulador', 'cuánto pago', 'mensualidad', 'simular hipotecario', 'simular personal', 'calcular mensualidad'],
+  },
+  {
     path: '/creditos/solicitud',
     title: 'Solicitud de Crédito',
     description: 'Formulario para solicitar cualquier tipo de crédito',
