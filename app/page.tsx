@@ -15,8 +15,15 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-primary-500 via-secondary-500 to-primary-600 text-white py-20">
-          <div className="max-w-7xl mx-auto px-6">
+        <section className="relative bg-gradient-to-br from-primary-500 via-secondary-500 to-primary-600 text-white py-20 overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <img
+              src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&q=80"
+              alt="Background"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
@@ -40,7 +47,6 @@ export default function Home() {
                   </Link>
                   <button
                     onClick={() => {
-                      // El botón del chat se abrirá
                       const chatButton = document.querySelector('[aria-label="Abrir chat"]') as HTMLButtonElement;
                       chatButton?.click();
                     }}
@@ -51,37 +57,11 @@ export default function Home() {
                 </div>
               </div>
               <div className="hidden lg:block">
-                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Zap className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg mb-1">Respuesta Instantánea</h3>
-                        <p className="text-primary-100 text-sm">Obtén información al instante con IA</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Shield className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg mb-1">100% Seguro</h3>
-                        <p className="text-primary-100 text-sm">Protección de datos de última generación</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Clock className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg mb-1">24/7 Disponible</h3>
-                        <p className="text-primary-100 text-sm">Asistencia cuando la necesites</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <img
+                  src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80"
+                  alt="App Multiplica Bank"
+                  className="rounded-2xl shadow-2xl"
+                />
               </div>
             </div>
           </div>
@@ -99,31 +79,38 @@ export default function Home() {
               {bankProducts.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-shadow"
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow group"
                 >
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center mb-4">
-                    <span className="text-white font-bold text-xl">
-                      {product.category === 'cuenta' ? '💳' :
-                       product.category === 'credito' ? '💰' :
-                       product.category === 'tarjeta' ? '💎' : '📈'}
-                    </span>
+                  <div className="relative h-40 overflow-hidden bg-gradient-to-br from-primary-500 to-secondary-500">
+                    <img
+                      src={
+                        product.category === 'cuenta' ? 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=400&q=80' :
+                        product.category === 'credito' ? 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80' :
+                        product.category === 'tarjeta' ? 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&q=80' :
+                        'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&q=80'
+                      }
+                      alt={product.name}
+                      className="w-full h-full object-cover opacity-30 group-hover:scale-110 transition-transform duration-300"
+                    />
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{product.name}</h3>
-                  <p className="text-gray-600 text-sm mb-4">{product.description}</p>
-                  <ul className="space-y-2 mb-6">
-                    {product.features.slice(0, 3).map((feature, index) => (
-                      <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
-                        <span className="text-primary-500">✓</span>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    href={`/productos/${product.id}`}
-                    className="block text-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
-                  >
-                    Más información
-                  </Link>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">{product.name}</h3>
+                    <p className="text-gray-600 text-sm mb-4">{product.description}</p>
+                    <ul className="space-y-2 mb-6">
+                      {product.features.slice(0, 3).map((feature, index) => (
+                        <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
+                          <span className="text-primary-500">✓</span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Link
+                      href={`/productos/${product.id}`}
+                      className="block text-center px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors"
+                    >
+                      Más información
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>
@@ -139,40 +126,50 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {bankSections.map((section) => (
-                <Link
-                  key={section.id}
-                  href={section.href}
-                  className="group bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-all hover:border-primary-500"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center group-hover:bg-primary-500 transition-colors">
-                      <span className="text-2xl group-hover:scale-110 transition-transform">
-                        {section.icon === 'Wallet' ? '💰' :
-                         section.icon === 'DollarSign' ? '💵' :
-                         section.icon === 'CreditCard' ? '💳' :
-                         section.icon === 'TrendingUp' ? '📈' :
-                         section.icon === 'Shield' ? '🛡️' : '⚙️'}
-                      </span>
+              {bankSections.map((section, index) => {
+                const images = [
+                  'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=600&q=80',
+                  'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80',
+                  'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=80',
+                  'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=80',
+                  'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&q=80',
+                  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80',
+                ];
+                return (
+                  <Link
+                    key={section.id}
+                    href={section.href}
+                    className="group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all hover:border-primary-500"
+                  >
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={images[index]}
+                        alt={section.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                      <div className="absolute bottom-4 left-4">
+                        <h3 className="text-2xl font-semibold text-white mb-1">
+                          {section.title}
+                        </h3>
+                        <p className="text-white/90 text-sm">{section.description}</p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
-                        {section.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-4">{section.description}</p>
+                    <div className="p-6">
                       {section.subsections && (
-                        <ul className="space-y-1">
+                        <ul className="space-y-2">
                           {section.subsections.slice(0, 3).map((subsection) => (
-                            <li key={subsection.id} className="text-sm text-gray-500">
-                              • {subsection.title}
+                            <li key={subsection.id} className="text-sm text-gray-600 flex items-center gap-2">
+                              <span className="w-1.5 h-1.5 bg-primary-500 rounded-full"></span>
+                              {subsection.title}
                             </li>
                           ))}
                         </ul>
                       )}
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>

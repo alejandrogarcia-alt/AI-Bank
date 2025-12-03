@@ -66,7 +66,7 @@ MENSAJE DEL USUARIO: ${message}
 Responde de forma natural, amigable y profesional. Si detectas una intención de navegación o llenado de formulario, incluye las etiquetas especiales (NAVIGATE_TO o FILL_FORM) al final de tu respuesta.
 `;
 
-    const model = genai.getGenerativeModel({ model: 'gemini-pro' });
+    const model = genai.getGenerativeModel({ model: 'gemini-1.5-pro' });
     const result = await model.generateContent(bankContext);
     const responseText = result.response.text();
 
