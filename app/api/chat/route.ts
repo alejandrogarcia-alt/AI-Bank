@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { bankSections, bankProducts } from '@/lib/bankData';
-
-const genai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(request: NextRequest) {
   try {
@@ -66,9 +63,21 @@ MENSAJE DEL USUARIO: ${message}
 Responde de forma natural, amigable y profesional. Si detectas una intención de navegación o llenado de formulario, incluye las etiquetas especiales (NAVIGATE_TO o FILL_FORM) al final de tu respuesta.
 `;
 
-    const model = genai.getGenerativeModel({ model: 'gemini-1.5-pro' });
-    const result = await model.generateContent(bankContext);
-    const responseText = result.response.text();
+    // Usar fetch directo con Gemini API
+    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: bankContext }] }]
+        })
+      }
+    );
+
+    const data = await response.json();
+    const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Lo siento, no pude procesar tu mensaje.';
 
     // Detectar intenciones de navegación
     let navigationIntent = null;
