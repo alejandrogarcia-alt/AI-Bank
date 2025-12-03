@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { CreditFormData } from '@/types';
 
-export default function CreditApplicationPage() {
+function CreditApplicationForm() {
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState<CreditFormData>({
     fullName: '',
@@ -301,5 +301,25 @@ export default function CreditApplicationPage() {
 
       <Footer />
     </div>
+  );
+}
+
+// Wrapper con Suspense para evitar errores de prerender
+export default function CreditApplicationPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Cargando formulario...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    }>
+      <CreditApplicationForm />
+    </Suspense>
   );
 }

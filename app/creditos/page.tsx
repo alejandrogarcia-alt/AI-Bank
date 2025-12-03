@@ -82,11 +82,16 @@ export default function CreditosPage() {
   const [calcTerm, setCalcTerm] = useState(24);
   const [calcRate] = useState(18.9);
 
+  // Format currency consistently on server and client
+  const formatCurrency = (amount: number) => {
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  };
+
   const calculateMonthly = () => {
     const monthlyRate = calcRate / 100 / 12;
     const monthly = (calcAmount * monthlyRate * Math.pow(1 + monthlyRate, calcTerm)) /
       (Math.pow(1 + monthlyRate, calcTerm) - 1);
-    return monthly.toFixed(2);
+    return formatCurrency(Math.round(monthly * 100) / 100);
   };
 
   return (
@@ -140,39 +145,39 @@ export default function CreditosPage() {
                       </div>
                     </div>
 
-                  <div className="p-6">
-                    <div className="grid grid-cols-3 gap-4 mb-6">
-                      <div>
-                        <div className="text-sm text-gray-600 mb-1">Monto</div>
-                        <div className="font-semibold text-gray-900">{credito.amount}</div>
+                    <div className="p-6">
+                      <div className="grid grid-cols-3 gap-4 mb-6">
+                        <div>
+                          <div className="text-sm text-gray-600 mb-1">Monto</div>
+                          <div className="font-semibold text-gray-900">{credito.amount}</div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-600 mb-1">Tasa</div>
+                          <div className="font-semibold text-primary-600">{credito.rate}</div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-600 mb-1">Plazo</div>
+                          <div className="font-semibold text-gray-900">{credito.term}</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="text-sm text-gray-600 mb-1">Tasa</div>
-                        <div className="font-semibold text-primary-600">{credito.rate}</div>
-                      </div>
-                      <div>
-                        <div className="text-sm text-gray-600 mb-1">Plazo</div>
-                        <div className="font-semibold text-gray-900">{credito.term}</div>
-                      </div>
+
+                      <ul className="space-y-2 mb-6">
+                        {credito.features.map((feature, index) => (
+                          <li key={index} className="flex items-start gap-2 text-gray-700">
+                            <span className="text-primary-500">✓</span>
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      <Link
+                        href={credito.href}
+                        className="block w-full py-3 bg-primary-500 text-white text-center rounded-lg font-semibold hover:bg-primary-600 transition-colors"
+                      >
+                        Solicitar Ahora
+                      </Link>
                     </div>
-
-                    <ul className="space-y-2 mb-6">
-                      {credito.features.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-2 text-gray-700">
-                          <span className="text-primary-500">✓</span>
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Link
-                      href={credito.href}
-                      className="block w-full py-3 bg-primary-500 text-white text-center rounded-lg font-semibold hover:bg-primary-600 transition-colors"
-                    >
-                      Solicitar Ahora
-                    </Link>
                   </div>
-                </div>
                 );
               })}
             </div>
@@ -199,7 +204,7 @@ export default function CreditosPage() {
               <div className="space-y-6 mb-8">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Monto del Crédito: ${calcAmount.toLocaleString()}
+                    Monto del Crédito: ${formatCurrency(calcAmount)}
                   </label>
                   <input
                     type="range"

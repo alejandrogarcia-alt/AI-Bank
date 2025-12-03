@@ -55,6 +55,7 @@ export default function FloatingChat() {
         },
         body: JSON.stringify({
           message: currentInput,
+          history: contextMessages, // Enviar todo el historial
           context: 'bank',
         }),
       });
