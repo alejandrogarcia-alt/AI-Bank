@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { bankSections, bankProducts } from '@/lib/bankData';
+import { validUrls, getAllUrlsForContext } from '@/lib/validUrls';
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,12 +23,11 @@ Eres un asistente virtual de Multiplica Bank, un banco moderno e inteligente. Tu
 4. COMPARAR productos
 5. RESPONDER preguntas sobre servicios
 
-ESTRUCTURA DEL SITIO WEB (3 niveles de navegación):
+⚠️ IMPORTANTE - URLS VÁLIDAS DEL SITIO:
+Solo puedes navegar a estas URLs exactas. NO inventes nuevas URLs. NO agregues subcarpetas que no existen.
 
-${bankSections.map(section => `
-${section.title} (${section.href}):
-${section.subsections?.map(sub => `  - ${sub.title}: ${sub.description} (${sub.href})`).join('\n')}
-`).join('\n')}
+LISTA COMPLETA DE URLS VÁLIDAS:
+${getAllUrlsForContext()}
 
 PRODUCTOS DISPONIBLES:
 ${bankProducts.map(product => `
@@ -39,14 +39,18 @@ ${bankProducts.map(product => `
 INSTRUCCIONES PARA RESPONDER:
 
 1. Si el usuario quiere NAVEGAR a una sección:
+   - IMPORTANTE: SOLO usa las URLs de la lista de URLs VÁLIDAS anterior
+   - Identifica la URL correcta de la lista basándote en las palabras clave
    - Responde confirmando que lo llevarás a esa sección
-   - Incluye en tu respuesta: NAVIGATE_TO: [ruta]
-   - Ejemplo: "Te llevaré a la sección de créditos hipotecarios. NAVIGATE_TO: /creditos/hipotecario"
+   - Incluye en tu respuesta: NAVIGATE_TO: [ruta exacta de la lista]
+   - Ejemplo: Si el usuario dice "quiero ver tarjetas de crédito", usa NAVIGATE_TO: /tarjetas (NO /tarjetas/credito)
+   - Ejemplo: Si el usuario dice "crédito hipotecario", usa NAVIGATE_TO: /creditos (NO /creditos/hipotecario)
 
 2. Si el usuario quiere solicitar un CRÉDITO:
    - Haz preguntas para obtener: nombre completo, email, teléfono, monto deseado, plazo, ingreso mensual
    - Cuando tengas toda la información, incluye: FILL_FORM: {datos en JSON}
-   - Ejemplo: "Perfecto, voy a pre-llenar tu solicitud. FILL_FORM: {\"fullName\":\"Juan\",\"amount\":50000,...}"
+   - Usa siempre NAVIGATE_TO: /creditos/solicitud para formularios de crédito
+   - Ejemplo: "Perfecto, voy a pre-llenar tu solicitud. NAVIGATE_TO: /creditos/solicitud FILL_FORM: {\"fullName\":\"Juan\",\"amount\":50000,...}"
 
 3. Si el usuario quiere INFORMACIÓN sobre productos:
    - Proporciona información detallada y relevante
@@ -60,7 +64,7 @@ INSTRUCCIONES PARA RESPONDER:
 
 MENSAJE DEL USUARIO: ${message}
 
-Responde de forma natural, amigable y profesional. Si detectas una intención de navegación o llenado de formulario, incluye las etiquetas especiales (NAVIGATE_TO o FILL_FORM) al final de tu respuesta.
+Responde de forma natural, amigable y profesional. Si detectas una intención de navegación, VERIFICA que la URL esté en la lista de URLs VÁLIDAS antes de usarla. Solo incluye las etiquetas especiales (NAVIGATE_TO o FILL_FORM) si es apropiado.
 `;
 
     // Usar fetch directo con Gemini API
@@ -87,11 +91,34 @@ Responde de forma natural, amigable y profesional. Si detectas una intención de
     // Buscar etiqueta NAVIGATE_TO
     const navigateMatch = responseText.match(/NAVIGATE_TO:\s*([^\s\n]+)/);
     if (navigateMatch) {
-      navigationIntent = {
-        action: 'navigate',
-        target: navigateMatch[1],
-      };
-      cleanResponse = responseText.replace(/NAVIGATE_TO:\s*([^\s\n]+)/, '').trim();
+      const requestedUrl = navigateMatch[1];
+
+      // Validar que la URL sea válida
+      const isValid = validUrls.some(url => url.path === requestedUrl);
+
+      if (isValid) {
+        navigationIntent = {
+          action: 'navigate',
+          target: requestedUrl,
+        };
+        cleanResponse = responseText.replace(/NAVIGATE_TO:\s*([^\s\n]+)/, '').trim();
+      } else {
+        // Si la URL no es válida, intentar encontrar la mejor coincidencia
+        const urlParts = requestedUrl.split('/').filter(Boolean);
+        let bestMatch = validUrls.find(url => url.path === `/${urlParts[0]}`);
+
+        if (bestMatch) {
+          navigationIntent = {
+            action: 'navigate',
+            target: bestMatch.path,
+          };
+          cleanResponse = responseText.replace(/NAVIGATE_TO:\s*([^\s\n]+)/, '').trim();
+          cleanResponse += ` Te llevo a la sección principal de ${bestMatch.title}.`;
+        } else {
+          cleanResponse = responseText.replace(/NAVIGATE_TO:\s*([^\s\n]+)/, '').trim();
+          cleanResponse += ' (La URL solicitada no existe, pero puedo ayudarte a encontrar lo que buscas)';
+        }
+      }
     }
 
     // Buscar etiqueta FILL_FORM

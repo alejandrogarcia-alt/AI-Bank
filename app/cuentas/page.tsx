@@ -117,15 +117,29 @@ export default function CuentasPage() {
         <section className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {cuentas.map((cuenta) => (
+              {cuentas.map((cuenta, index) => {
+                const images = [
+                  'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&q=80',
+                  'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=80',
+                  'https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?w=800&q=80',
+                  'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80',
+                ];
+                return (
                 <div
                   key={cuenta.id}
-                  className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow"
+                  className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow group"
                 >
-                  <div className="bg-gradient-to-r from-primary-500 to-secondary-500 p-6 text-white">
-                    <div className="text-5xl mb-4">{cuenta.image}</div>
-                    <h2 className="text-3xl font-bold mb-2">{cuenta.name}</h2>
-                    <p className="text-primary-100">{cuenta.description}</p>
+                  <div className="relative h-56 overflow-hidden">
+                    <img
+                      src={images[index]}
+                      alt={cuenta.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <h2 className="text-3xl font-bold mb-2">{cuenta.name}</h2>
+                      <p className="text-white/90 text-lg">{cuenta.description}</p>
+                    </div>
                   </div>
 
                   <div className="p-6">
@@ -162,7 +176,8 @@ export default function CuentasPage() {
                     </Link>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>

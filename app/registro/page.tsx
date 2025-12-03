@@ -48,10 +48,23 @@ export default function RegistroPage() {
         <Header />
         <main className="flex-1 py-16 bg-gray-50">
           <div className="max-w-2xl mx-auto px-6">
-            <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-              <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-5xl">✓</span>
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+              {/* Success Header with Image */}
+              <div className="relative h-48 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?w=800&q=80"
+                  alt="Success"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg">
+                    <span className="text-6xl text-primary-500">✓</span>
+                  </div>
+                </div>
               </div>
+
+              <div className="p-8 text-center">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
                 ¡Registro Exitoso!
               </h1>
@@ -74,6 +87,7 @@ export default function RegistroPage() {
               >
                 Ir al Inicio
               </button>
+              </div>
             </div>
           </div>
         </main>
@@ -86,6 +100,23 @@ export default function RegistroPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+
+      {/* Hero Section with Background */}
+      <section className="relative bg-gradient-to-br from-primary-500 to-secondary-500 py-12">
+        <div className="absolute inset-0 opacity-10">
+          <img
+            src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=1600&q=80"
+            alt="Banking"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="relative max-w-3xl mx-auto px-6 text-center text-white">
+          <h1 className="text-4xl font-bold mb-4">Únete a Multiplica Bank</h1>
+          <p className="text-xl text-primary-50">
+            Abre tu cuenta 100% digital en minutos. Sin comisiones, sin complicaciones.
+          </p>
+        </div>
+      </section>
 
       <main className="flex-1 py-16 bg-gray-50">
         <div className="max-w-3xl mx-auto px-6">
@@ -120,22 +151,34 @@ export default function RegistroPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Abre tu Cuenta Multiplica
-            </h1>
-            <p className="text-gray-600 mb-8">
-              Sin comisiones, sin saldo mínimo. 100% digital en minutos.
-            </p>
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            {/* Form Header with Image */}
+            <div className="relative h-32 bg-gradient-to-r from-primary-500 to-secondary-500">
+              <div className="absolute inset-0 opacity-20">
+                <img
+                  src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&q=80"
+                  alt="Banking"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="relative h-full flex items-center justify-center">
+                <div className="text-center text-white">
+                  <h2 className="text-2xl font-bold">Paso {step} de 3</h2>
+                  <p className="text-primary-50 text-sm mt-1">
+                    {step === 1 && 'Datos Personales'}
+                    {step === 2 && 'Dirección'}
+                    {step === 3 && 'Seguridad'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-8">
 
             <form onSubmit={handleSubmit}>
               {/* Paso 1: Datos Personales */}
               {step === 1 && (
                 <div className="space-y-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <User className="w-6 h-6 text-primary-500" />
-                    Datos Personales
-                  </h2>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -213,10 +256,6 @@ export default function RegistroPage() {
               {/* Paso 2: Dirección */}
               {step === 2 && (
                 <div className="space-y-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <MapPin className="w-6 h-6 text-primary-500" />
-                    Dirección
-                  </h2>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -306,10 +345,6 @@ export default function RegistroPage() {
               {/* Paso 3: Seguridad */}
               {step === 3 && (
                 <div className="space-y-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                    <Lock className="w-6 h-6 text-primary-500" />
-                    Seguridad
-                  </h2>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -384,6 +419,7 @@ export default function RegistroPage() {
                 </div>
               )}
             </form>
+            </div>
           </div>
 
           {/* Beneficios */}
