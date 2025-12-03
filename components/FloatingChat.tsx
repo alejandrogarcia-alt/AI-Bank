@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Send, Bot, User, MessageCircle, Minimize2 } from 'lucide-react';
 import { useChat } from '@/contexts/ChatContext';
+import { startAutoScroll } from '@/lib/autoScroll';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -68,12 +69,22 @@ export default function FloatingChat() {
         content: data.response,
       });
 
-      // Handle navigation
+
+
+
       if (data.navigationIntent) {
         if (data.navigationIntent.action === 'navigate' && data.navigationIntent.target) {
           // Wait 1 second before navigating so user can see the response
           setTimeout(() => {
             router.push(data.navigationIntent.target);
+            // Start auto-scroll tour after navigation
+            setTimeout(() => {
+              startAutoScroll({
+                duration: 8000, // 8 seconds tour
+                pauseAtEnd: 1500,
+                delay: 500
+              });
+            }, 500);
           }, 1000);
         } else if (data.navigationIntent.action === 'fillForm' && data.formData) {
           // Navigate to the form with data
@@ -146,16 +157,14 @@ export default function FloatingChat() {
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex gap-3 ${
-                  message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
-                }`}
+                className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
+                  }`}
               >
                 <div
-                  className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                    message.role === 'user'
-                      ? 'bg-secondary-500'
-                      : 'bg-primary-500'
-                  }`}
+                  className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${message.role === 'user'
+                    ? 'bg-secondary-500'
+                    : 'bg-primary-500'
+                    }`}
                 >
                   {message.role === 'user' ? (
                     <User className="w-5 h-5 text-white" />
@@ -164,11 +173,10 @@ export default function FloatingChat() {
                   )}
                 </div>
                 <div
-                  className={`max-w-[75%] rounded-2xl px-4 py-2 ${
-                    message.role === 'user'
-                      ? 'bg-secondary-500 text-white'
-                      : 'bg-white text-gray-900 shadow-sm border border-gray-200'
-                  }`}
+                  className={`max-w-[75%] rounded-2xl px-4 py-2 ${message.role === 'user'
+                    ? 'bg-secondary-500 text-white'
+                    : 'bg-white text-gray-900 shadow-sm border border-gray-200'
+                    }`}
                 >
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                 </div>
