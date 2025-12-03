@@ -103,16 +103,30 @@ export default function InversionesPage() {
         <section className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {inversiones.map((inversion) => (
-                <div
-                  key={inversion.id}
-                  className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow"
-                >
-                  <div className={`bg-gradient-to-r ${inversion.color} p-8 text-white`}>
-                    <div className="text-6xl mb-4">{inversion.icon}</div>
-                    <h2 className="text-3xl font-bold mb-2">{inversion.name}</h2>
-                    <p className="text-white/90 text-lg">{inversion.description}</p>
-                  </div>
+              {inversiones.map((inversion, index) => {
+                const images = [
+                  'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80',
+                  'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=800&q=80',
+                  'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80',
+                  'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80',
+                ];
+                return (
+                  <div
+                    key={inversion.id}
+                    className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow group"
+                  >
+                    <div className="relative h-56 overflow-hidden">
+                      <img
+                        src={images[index]}
+                        alt={inversion.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                      <div className="absolute bottom-4 left-4 text-white">
+                        <h2 className="text-3xl font-bold mb-2">{inversion.name}</h2>
+                        <p className="text-white/90 text-lg">{inversion.description}</p>
+                      </div>
+                    </div>
 
                   <div className="p-6">
                     <div className="grid grid-cols-3 gap-4 mb-6 bg-gray-50 rounded-lg p-4">
@@ -148,7 +162,8 @@ export default function InversionesPage() {
                     </Link>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
