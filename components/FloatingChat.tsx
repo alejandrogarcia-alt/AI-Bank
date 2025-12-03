@@ -69,9 +69,7 @@ export default function FloatingChat() {
         content: data.response,
       });
 
-
-
-
+      // Handle navigation
       if (data.navigationIntent) {
         if (data.navigationIntent.action === 'navigate' && data.navigationIntent.target) {
           // Wait 1 second before navigating so user can see the response
@@ -162,8 +160,8 @@ export default function FloatingChat() {
               >
                 <div
                   className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${message.role === 'user'
-                    ? 'bg-secondary-500'
-                    : 'bg-primary-500'
+                      ? 'bg-secondary-500'
+                      : 'bg-primary-500'
                     }`}
                 >
                   {message.role === 'user' ? (
@@ -174,8 +172,8 @@ export default function FloatingChat() {
                 </div>
                 <div
                   className={`max-w-[75%] rounded-2xl px-4 py-2 ${message.role === 'user'
-                    ? 'bg-secondary-500 text-white'
-                    : 'bg-white text-gray-900 shadow-sm border border-gray-200'
+                      ? 'bg-secondary-500 text-white'
+                      : 'bg-white text-gray-900 shadow-sm border border-gray-200'
                     }`}
                 >
                   <p className="text-sm whitespace-pre-wrap">{message.content}</p>

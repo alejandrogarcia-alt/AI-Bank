@@ -38,7 +38,7 @@ Render detectará automáticamente el archivo `render.yaml`, pero también puede
 2. Click en **"Add Environment Variable"**
 3. Agrega:
    - **Key:** `GEMINI_API_KEY`
-   - **Value:** `AIzaSyCqDyGbcDi6hDropI0DmBBbrIn6THd6nHY` (o tu API key)
+   - **Value:** `tu-api-key-de-gemini-aqui`
 
 4. También agrega (opcional pero recomendado):
    - **Key:** `NODE_VERSION`
