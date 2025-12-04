@@ -76,18 +76,25 @@ export default function FloatingChat() {
           // Wait 1 second before navigating so user can see the response
           setTimeout(() => {
             router.push(data.navigationIntent.target);
-            // Start auto-scroll tour after navigation
-            setTimeout(() => {
-              setIsAutoScrolling(true);
-              startAutoScroll({
-                duration: 11000, // 11 seconds tour (1/3 slower)
-                pauseAtEnd: 1500,
-                delay: 500,
-                onComplete: () => {
-                  setIsAutoScrolling(false);
-                }
-              });
-            }, 500);
+
+            // Only start auto-scroll if URL doesn't have an anchor/hash
+            // If there's an anchor, user wants to go to a specific section
+            const hasAnchor = data.navigationIntent.target.includes('#');
+
+            if (!hasAnchor) {
+              // Start auto-scroll tour after navigation
+              setTimeout(() => {
+                setIsAutoScrolling(true);
+                startAutoScroll({
+                  duration: 11000, // 11 seconds tour (1/3 slower)
+                  pauseAtEnd: 1500,
+                  delay: 500,
+                  onComplete: () => {
+                    setIsAutoScrolling(false);
+                  }
+                });
+              }, 500);
+            }
           }, 1000);
         } else if (data.navigationIntent.action === 'fillForm' && data.formData) {
           // Navigate to the form with data

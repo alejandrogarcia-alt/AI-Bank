@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Crédito</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .simulator-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .product-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            color: white;
+            display: none;
+        }
+
+        .product-badge.show {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .product-badge-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-bottom: 6px;
+        }
+
+        .product-badge-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .product-badge-details {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            font-size: 13px;
+        }
+
+        .product-badge-detail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .product-badge-detail-label {
+            opacity: 0.8;
+        }
+
+        .product-badge-detail-value {
+            font-weight: 700;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            color: #1a202c;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .label-value {
+            color: #667eea;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .slider-container {
+            position: relative;
+            padding: 10px 0;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #667eea 0%, #667eea var(--value), #e2e8f0 var(--value), #e2e8f0 100%);
+            outline: none;
+            -webkit-appearance: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.6);
+        }
+
+        .select-wrapper {
+            position: relative;
+        }
+
+        select {
+            width: 100%;
+            padding: 14px 40px 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            color: #2d3748;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+        }
+
+        select:hover {
+            border-color: #667eea;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .select-wrapper::after {
+            content: '▼';
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            pointer-events: none;
+            font-size: 12px;
+        }
+
+        .results {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 28px;
+            margin-top: 32px;
+            color: white;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .results h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .result-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .result-highlight {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .result-highlight .result-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .result-highlight .result-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .button-container {
+            margin-top: 24px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .simulator-container {
+                padding: 24px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .result-value {
+                font-size: 18px;
+            }
+
+            .product-badge-name {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="simulator-container">
+        <!-- Product Badge -->
+        <div id="productBadge" class="product-badge">
+            <div class="product-badge-title">Simulando</div>
+            <div class="product-badge-name" id="productName">Crédito Personal Multiplica Exprés</div>
+            <div class="product-badge-details">
+                <div class="product-badge-detail">
+                    <span class="product-badge-detail-label">Tasa:</span>
+                    <span class="product-badge-detail-value" id="productRate">18.9% anual</span>
+                </div>
+                <div class="product-badge-detail">
+                    <span class="product-badge-detail-label">Tipo:</span>
+                    <span class="product-badge-detail-value" id="productType">Personal</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="header">
+            <h1>💰 Simulador de Crédito</h1>
+            <p>Calcula tu préstamo ideal en segundos</p>
+        </div>
+
+        <form id="creditForm">
+            <div class="form-group">
+                <label>
+                    <span>Monto del préstamo</span>
+                    <span class="label-value" id="amountDisplay">$100,000</span>
+                </label>
+                <div class="slider-container">
+                    <input type="range" id="amount" min="10000" max="500000" step="5000" value="100000"
+                        style="--value: 18%">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <span>Plazo</span>
+                    <span class="label-value" id="termDisplay">24 meses</span>
+                </label>
+                <div class="slider-container">
+                    <input type="range" id="term" min="6" max="60" step="6" value="24" style="--value: 33%">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <span>Tasa de interés anual</span>
+                    <span class="label-value" id="rateDisplay">12%</span>
+                </label>
+                <div class="slider-container">
+                    <input type="range" id="rate" min="5" max="30" step="0.5" value="12" style="--value: 28%">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Tipo de crédito</label>
+                <div class="select-wrapper">
+                    <select id="creditType">
+                        <option value="personal">Crédito Personal</option>
+                        <option value="auto">Crédito Automotriz</option>
+                        <option value="hipotecario">Crédito Hipotecario</option>
+                        <option value="empresarial">Crédito Empresarial</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+
+        <div class="results" id="results">
+            <h2>📊 Resumen de tu crédito</h2>
+
+            <div class="result-item">
+                <span class="result-label">Pago mensual</span>
+                <span class="result-value" id="monthlyPayment">$4,707</span>
+            </div>
+
+            <div class="result-item">
+                <span class="result-label">Total de intereses</span>
+                <span class="result-value" id="totalInterest">$12,968</span>
+            </div>
+
+            <div class="result-highlight">
+                <div class="result-label">Total a pagar</div>
+                <div class="result-value" id="totalPayment">$112,968</div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button type="button" class="btn-primary" onclick="applyForCredit()">
+                Solicitar Crédito
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Elementos del DOM
+        const amountSlider = document.getElementById('amount');
+        const termSlider = document.getElementById('term');
+        const rateSlider = document.getElementById('rate');
+        const creditTypeSelect = document.getElementById('creditType');
+        const amountDisplay = document.getElementById('amountDisplay');
+        const termDisplay = document.getElementById('termDisplay');
+        const rateDisplay = document.getElementById('rateDisplay');
+        const monthlyPaymentEl = document.getElementById('monthlyPayment');
+        const totalInterestEl = document.getElementById('totalInterest');
+        const totalPaymentEl = document.getElementById('totalPayment');
+        const productBadge = document.getElementById('productBadge');
+        const productName = document.getElementById('productName');
+        const productRate = document.getElementById('productRate');
+        const productType = document.getElementById('productType');
+
+        // Catálogo de productos de crédito
+        const creditProducts = {
+            'personal': {
+                name: 'Crédito Personal Multiplica Exprés',
+                rate: 18.9,
+                type: 'Personal',
+                minAmount: 10000,
+                maxAmount: 500000,
+                defaultTerm: 24
+            },
+            'auto': {
+                name: 'Crédito Automotriz Multiplica',
+                rate: 14.5,
+                type: 'Automotriz',
+                minAmount: 50000,
+                maxAmount: 1000000,
+                defaultTerm: 48
+            },
+            'hipotecario': {
+                name: 'Crédito Hipotecario Multiplica',
+                rate: 10.5,
+                type: 'Hipotecario',
+                minAmount: 300000,
+                maxAmount: 5000000,
+                defaultTerm: 240
+            },
+            'empresarial': {
+                name: 'Crédito Empresarial Multiplica',
+                rate: 16.0,
+                type: 'Empresarial',
+                minAmount: 50000,
+                maxAmount: 2000000,
+                defaultTerm: 36
+            }
+        };
+
+        // Función para obtener parámetros de URL
+        function getURLParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                amount: params.get('amount'),
+                term: params.get('term'),
+                rate: params.get('rate'),
+                type: params.get('type'),
+                productName: params.get('productName')
+            };
+        }
+
+        // Función para actualizar el badge del producto
+        function updateProductBadge(type) {
+            const product = creditProducts[type] || creditProducts['personal'];
+            productName.textContent = product.name;
+            productRate.textContent = `${product.rate}% anual`;
+            productType.textContent = product.type;
+            productBadge.classList.add('show');
+        }
+
+        // Función para formatear moneda
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Función para actualizar el gradiente del slider
+        function updateSliderGradient(slider) {
+            const min = parseFloat(slider.min);
+            const max = parseFloat(slider.max);
+            const value = parseFloat(slider.value);
+            const percentage = ((value - min) / (max - min)) * 100;
+            slider.style.setProperty('--value', percentage + '%');
+        }
+
+        // Función para calcular el pago mensual
+        function calculatePayment() {
+            const principal = parseFloat(amountSlider.value);
+            const interestRate = parseFloat(rateSlider.value) / 100 / 12;
+            const numberOfPayments = parseFloat(termSlider.value);
+
+            // Fórmula del pago mensual
+            const monthlyPayment = principal *
+                (interestRate * Math.pow(1 + interestRate, numberOfPayments)) /
+                (Math.pow(1 + interestRate, numberOfPayments) - 1);
+
+            const totalPayment = monthlyPayment * numberOfPayments;
+            const totalInterest = totalPayment - principal;
+
+            // Actualizar la UI
+            monthlyPaymentEl.textContent = formatCurrency(monthlyPayment);
+            totalInterestEl.textContent = formatCurrency(totalInterest);
+            totalPaymentEl.textContent = formatCurrency(totalPayment);
+        }
+
+        // Event listeners para los sliders
+        amountSlider.addEventListener('input', (e) => {
+            amountDisplay.textContent = formatCurrency(e.target.value);
+            updateSliderGradient(e.target);
+            calculatePayment();
+        });
+
+        termSlider.addEventListener('input', (e) => {
+            termDisplay.textContent = `${e.target.value} meses`;
+            updateSliderGradient(e.target);
+            calculatePayment();
+        });
+
+        rateSlider.addEventListener('input', (e) => {
+            rateDisplay.textContent = `${e.target.value}%`;
+            updateSliderGradient(e.target);
+            calculatePayment();
+        });
+
+        // Event listener para cambio de tipo de crédito
+        creditTypeSelect.addEventListener('change', (e) => {
+            const creditType = e.target.value;
+            const product = creditProducts[creditType];
+
+            // Actualizar tasa según el producto
+            rateSlider.value = product.rate;
+            rateDisplay.textContent = `${product.rate}%`;
+            updateSliderGradient(rateSlider);
+
+            // Actualizar badge
+            updateProductBadge(creditType);
+
+            calculatePayment();
+        });
+
+        // Función para solicitar crédito
+        function applyForCredit() {
+            const creditType = creditTypeSelect.value;
+            const amount = amountSlider.value;
+            const term = termSlider.value;
+            const product = creditProducts[creditType];
+
+            alert(`¡Solicitud iniciada!\n\nProducto: ${product.name}\nMonto: ${formatCurrency(amount)}\nPlazo: ${term} meses\nTasa: ${product.rate}% anual\n\nUn asesor se comunicará contigo pronto.`);
+        }
+
+        // Inicializar con parámetros de URL si existen
+        function initialize() {
+            const urlParams = getURLParams();
+
+            // Pre-llenar con parámetros de URL
+            if (urlParams.amount) {
+                const amount = parseInt(urlParams.amount);
+                if (amount >= 10000 && amount <= 500000) {
+                    amountSlider.value = amount;
+                    amountDisplay.textContent = formatCurrency(amount);
+                }
+            }
+
+            if (urlParams.term) {
+                const term = parseInt(urlParams.term);
+                // Convertir años a meses si necesario
+                const termMonths = term > 60 ? term : (term <= 10 ? term * 12 : term);
+                if (termMonths >= 6 && termMonths <= 60) {
+                    termSlider.value = termMonths;
+                    termDisplay.textContent = `${termMonths} meses`;
+                }
+            }
+
+            if (urlParams.rate) {
+                const rate = parseFloat(urlParams.rate);
+                if (rate >= 5 && rate <= 30) {
+                    rateSlider.value = rate;
+                    rateDisplay.textContent = `${rate}%`;
+                }
+            }
+
+            if (urlParams.type) {
+                const type = urlParams.type.toLowerCase();
+                if (creditProducts[type]) {
+                    creditTypeSelect.value = type;
+                    const product = creditProducts[type];
+                    rateSlider.value = product.rate;
+                    rateDisplay.textContent = `${product.rate}%`;
+                }
+            }
+
+            // Mostrar badge si hay parámetros
+            if (urlParams.type || urlParams.productName) {
+                const creditType = urlParams.type || 'personal';
+                updateProductBadge(creditType);
+
+                // Sobrescribir nombre del producto si viene en URL
+                if (urlParams.productName) {
+                    productName.textContent = decodeURIComponent(urlParams.productName);
+                }
+            }
+
+            // Actualizar gradientes
+            updateSliderGradient(amountSlider);
+            updateSliderGradient(termSlider);
+            updateSliderGradient(rateSlider);
+
+            // Calcular pago inicial
+            calculatePayment();
+        }
+
+        // Ejecutar inicialización cuando el DOM esté listo
+        initialize();
+    </script>
+</body>
+
+</html>

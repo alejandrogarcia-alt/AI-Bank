@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparador de Tarjetas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .comparator-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            color: #1e293b;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .filter-section {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: end;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            color: #334155;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        select,
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            background-color: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        select:focus,
+        input:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 0 3px rgba(245, 87, 108, 0.1);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+            border-color: #f5576c;
+        }
+
+        .card-header {
+            margin-bottom: 20px;
+        }
+
+        .card-type {
+            display: inline-block;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .card-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .card-annual-fee {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .card-annual-fee strong {
+            color: #f5576c;
+            font-size: 16px;
+        }
+
+        .card-features {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .card-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .card-features li:last-child {
+            border-bottom: none;
+        }
+
+        .card-features .icon {
+            color: #f5576c;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .card-benefits {
+            background: #fef2f2;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .card-benefits h4 {
+            font-size: 13px;
+            color: #991b1b;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .benefit-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .benefit-tag {
+            background: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #991b1b;
+            font-weight: 500;
+        }
+
+        .btn-apply {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 16px;
+        }
+
+        .btn-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .recommended {
+            border-color: #f5576c;
+            box-shadow: 0 8px 24px rgba(245, 87, 108, 0.2);
+        }
+
+        .recommended::before {
+            content: '⭐ RECOMENDADA';
+            position: absolute;
+            top: 16px;
+            right: -32px;
+            background: #f5576c;
+            color: white;
+            padding: 6px 40px;
+            font-size: 11px;
+            font-weight: 700;
+            transform: rotate(45deg);
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .comparator-container {
+                padding: 24px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-row {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="comparator-container">
+        <div class="header">
+            <h1>💳 Comparador de Tarjetas</h1>
+            <p>Encuentra la tarjeta perfecta para ti</p>
+        </div>
+
+        <div class="filter-section">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Tipo de tarjeta</label>
+                    <select id="cardType" onchange="filterCards()">
+                        <option value="all">Todas</option>
+                        <option value="debito">Débito</option>
+                        <option value="credito">Crédito</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Ingreso mensual</label>
+                    <input type="number" id="income" placeholder="$15,000" value="15000" onchange="filterCards()">
+                </div>
+                <div class="filter-group">
+                    <label>Beneficios</label>
+                    <select id="benefits" onchange="filterCards()">
+                        <option value="all">Todos</option>
+                        <option value="cashback">Cashback</option>
+                        <option value="millas">Millas</option>
+                        <option value="sin-anualidad">Sin anualidad</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="cardsGrid" class="cards-grid">
+            <!-- Cards will be dynamically generated -->
+        </div>
+    </div>
+
+    <script>
+        const cardsData = [
+            {
+                id: 1,
+                name: 'Multiplica Black',
+                type: 'credito',
+                annualFee: 3500,
+                minIncome: 25000,
+                cashback: 3,
+                benefits: ['cashback', 'millas', 'seguros'],
+                features: [
+                    'Hasta 3% de cashback en todas tus compras',
+                    'Millas ilimitadas para viajes',
+                    'Acceso a salas VIP en aeropuertos',
+                    'Seguro de viaje internacional',
+                    'Concierge 24/7'
+                ],
+                recommended: true
+            },
+            {
+                id: 2,
+                name: 'Multiplica Gold',
+                type: 'credito',
+                annualFee: 1500,
+                minIncome: 15000,
+                cashback: 2,
+                benefits: ['cashback', 'millas'],
+                features: [
+                    '2% de cashback en supermercados',
+                    'Programa de millas acumulables',
+                    'Seguro contra fraudes',
+                    '0% interés primeros 6 meses',
+                    'App móvil avanzada'
+                ],
+                recommended: false
+            },
+            {
+                id: 3,
+                name: 'Multiplica Clásica',
+                type: 'credito',
+                annualFee: 0,
+                minIncome: 8000,
+                cashback: 1,
+                benefits: ['sin-anualidad'],
+                features: [
+                    'Sin anualidad de por vida',
+                    '1% de cashback en gasolineras',
+                    'Protección de compras',
+                    'Pagos sin contacto',
+                    'Notificaciones en tiempo real'
+                ],
+                recommended: false
+            },
+            {
+                id: 4,
+                name: 'Multiplica Débito Premium',
+                type: 'debito',
+                annualFee: 0,
+                minIncome: 5000,
+                cashback: 0.5,
+                benefits: ['sin-anualidad'],
+                features: [
+                    'Sin comisiones por retiros',
+                    '0.5% de cashback',
+                    'Retiros gratis en cualquier cajero',
+                    'Transferencias ilimitadas sin costo',
+                    'Control de gastos inteligente'
+                ],
+                recommended: false
+            }
+        ];
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function renderCards(cards) {
+            const grid = document.getElementById('cardsGrid');
+
+            if (cards.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #64748b;">No se encontraron tarjetas con estos filtros. Intenta ajustar tus criterios.</div>';
+                return;
+            }
+
+            grid.innerHTML = cards.map(card => `
+                <div class="card ${card.recommended ? 'recommended' : ''}">
+                    <div class="card-header">
+                        <div class="card-type">${card.type === 'credito' ? 'Crédito' : 'Débito'}</div>
+                        <div class="card-name">${card.name}</div>
+                        <div class="card-annual-fee">
+                            Anualidad: <strong>${card.annualFee === 0 ? '¡GRATIS!' : formatCurrency(card.annualFee)}</strong>
+                        </div>
+                    </div>
+
+                    <ul class="card-features">
+                        ${card.features.map(feature => `
+                            <li><span class="icon">✓</span> ${feature}</li>
+                        `).join('')}
+                    </ul>
+
+                    <div class="card-benefits">
+                        <h4>💎 Beneficios destacados</h4>
+                        <div class="benefit-tags">
+                            ${card.cashback > 0 ? `<span class="benefit-tag">${card.cashback}% Cashback</span>` : ''}
+                            ${card.benefits.includes('millas') ? '<span class="benefit-tag">Acumula Millas</span>' : ''}
+                            ${card.annualFee === 0 ? '<span class="benefit-tag">Sin Anualidad</span>' : ''}
+                            ${card.benefits.includes('seguros') ? '<span class="benefit-tag">Seguros Incluidos</span>' : ''}
+                        </div>
+                    </div>
+
+                    <div style="font-size: 12px; color: #64748b; margin-top: 12px;">
+                        Ingreso mínimo: ${formatCurrency(card.minIncome)}/mes
+                    </div>
+
+                    <button class="btn-apply" onclick="applyForCard('${card.name}')">
+                        Solicitar Tarjeta
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function filterCards() {
+            const type = document.getElementById('cardType').value;
+            const income = parseFloat(document.getElementById('income').value) || 0;
+            const benefit = document.getElementById('benefits').value;
+
+            let filtered = cardsData.filter(card => {
+                // Filtro por tipo
+                if (type !== 'all' && card.type !== type) return false;
+
+                // Filtro por ingreso
+                if (income > 0 && card.minIncome > income) return false;
+
+                // Filtro por beneficios
+                if (benefit !== 'all') {
+                    if (benefit === 'cashback' && card.cashback <= 0) return false;
+                    if (benefit === 'sin-anualidad' && card.annualFee > 0) return false;
+                    if (benefit === 'millas' && !card.benefits.includes('millas')) return false;
+                }
+
+                return true;
+            });
+
+            renderCards(filtered);
+        }
+
+        function applyForCard(cardName) {
+            alert(`¡Excelente elección! 🎉\n\nEstás a punto de solicitar la tarjeta:\n${cardName}\n\nSerás redirigido al formulario de solicitud.`);
+        }
+
+        // Inicializar
+        filterCards();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Inversiones</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .simulator-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            color: #1e293b;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: 12px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: #1e293b;
+        }
+
+        .tab.active {
+            background: white;
+            color: #11998e;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #2d3748;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .label-value {
+            color: #11998e;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #11998e 0%, #11998e var(--value), #e2e8f0 var(--value), #e2e8f0 100%);
+            outline: none;
+            -webkit-appearance: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #11998e;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(17, 153, 142, 0.6);
+        }
+
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            color: #2d3748;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2311998e' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #11998e;
+            box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.1);
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            border: 2px solid #e2e8f0;
+        }
+
+        .chart {
+            width: 100%;
+            height: 250px;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .bar-container {
+            display: flex;
+            align-items: flex-end;
+            height: 200px;
+            gap: 8px;
+            padding-bottom: 10px;
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar {
+            width: 100%;
+            background: linear-gradient(to top, #11998e, #38ef7d);
+            border-radius: 8px 8px 0 0;
+            transition: all 0.5s ease;
+            position: relative;
+            box-shadow: 0 -4px 12px rgba(17, 153, 142, 0.2);
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: 700;
+            color: #11998e;
+            white-space: nowrap;
+        }
+
+        .bar-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border-radius: 16px;
+            padding: 20px;
+            color: white;
+        }
+
+        .result-card-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .result-card-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .result-card-detail {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+
+        .breakdown {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .breakdown h3 {
+            color: #1e293b;
+            font-size: 16px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-label {
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .breakdown-value {
+            color: #1e293b;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+            margin-top: 24px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+        }
+
+        @media (max-width: 640px) {
+            .simulator-container {
+                padding: 24px;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="simulator-container">
+        <div class="header">
+            <h1>📈 Simulador de Inversiones</h1>
+            <p>Proyecta el crecimiento de tu dinero</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('simple')">Interés Simple</button>
+            <button class="tab" onclick="switchTab('compuesto')">Interés Compuesto</button>
+            <button class="tab" onclick="switchTab('mensual')">Ahorro Mensual</button>
+        </div>
+
+        <!-- Interés Simple -->
+        <div id="simple-section" class="tab-content">
+            <div class="form-group">
+                <label>
+                    <span>Inversión inicial</span>
+                    <span class="label-value" id="initialDisplay">$50,000</span>
+                </label>
+                <input type="range" id="initial" min="10000" max="1000000" step="10000" value="50000"
+                    style="--value: 4%" oninput="updateSimulation()">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <span>Tasa de interés anual</span>
+                    <span class="label-value" id="rateDisplay">8%</span>
+                </label>
+                <input type="range" id="rate" min="1" max="25" step="0.5" value="8" style="--value: 29%"
+                    oninput="updateSimulation()">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <span>Plazo</span>
+                    <span class="label-value" id="periodDisplay">5 años</span>
+                </label>
+                <input type="range" id="period" min="1" max="30" step="1" value="5" style="--value: 13%"
+                    oninput="updateSimulation()">
+            </div>
+
+            <div class="form-group">
+                <label>Tipo de inversión</label>
+                <select id="investmentType" onchange="updateSimulation()">
+                    <option value="cetes">CETES - Bajo riesgo</option>
+                    <option value="fondos">Fondos de inversión - Riesgo medio</option>
+                    <option value="acciones">Acciones - Alto riesgo</option>
+                    <option value="mixto">Portafolio mixto</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h3 style="color: #1e293b; font-size: 16px; margin-bottom: 12px;">Proyección de crecimiento</h3>
+            <div class="bar-container" id="chartBars">
+                <!-- Bars will be generated dynamically -->
+            </div>
+        </div>
+
+        <div class="results-grid">
+            <div class="result-card">
+                <div class="result-card-label">Total al final</div>
+                <div class="result-card-value" id="finalAmount">$70,000</div>
+                <div class="result-card-detail" id="finalDetail">En 5 años</div>
+            </div>
+            <div class="result-card">
+                <div class="result-card-label">Ganancias totales</div>
+                <div class="result-card-value" id="totalGains">$20,000</div>
+                <div class="result-card-detail" id="gainsPercent">+40% de retorno</div>
+            </div>
+            <div class="result-card">
+                <div class="result-card-label">Rendimiento anual</div>
+                <div class="result-card-value" id="annualReturn">8%</div>
+                <div class="result-card-detail">Promedio estimado</div>
+            </div>
+        </div>
+
+        <div class="breakdown">
+            <h3>📊 Desglose anual</h3>
+            <div id="yearlyBreakdown">
+                <!-- Will be populated dynamically -->
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="startInvestment()">
+            Comenzar a Invertir
+        </button>
+    </div>
+
+    <script>
+        let currentMode = 'simple';
+
+        function switchTab(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            updateSimulation();
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function updateSliderGradient(slider) {
+            const min = parseFloat(slider.min);
+            const max = parseFloat(slider.max);
+            const value = parseFloat(slider.value);
+            const percentage = ((value - min) / (max - min)) * 100;
+            slider.style.setProperty('--value', percentage + '%');
+        }
+
+        function updateSimulation() {
+            const initial = parseFloat(document.getElementById('initial').value);
+            const rate = parseFloat(document.getElementById('rate').value) / 100;
+            const years = parseInt(document.getElementById('period').value);
+
+            // Update displays
+            document.getElementById('initialDisplay').textContent = formatCurrency(initial);
+            document.getElementById('rateDisplay').textContent = (rate * 100).toFixed(1) + '%';
+            document.getElementById('periodDisplay').textContent = years + (years === 1 ? ' año' : ' años');
+
+            updateSliderGradient(document.getElementById('initial'));
+            updateSliderGradient(document.getElementById('rate'));
+            updateSliderGradient(document.getElementById('period'));
+
+            // Calculate based on mode
+            let yearlyData = [];
+            let total = initial;
+
+            if (currentMode === 'simple') {
+                for (let i = 1; i <= Math.min(years, 10); i++) {
+                    total = initial * (1 + rate * i);
+                    yearlyData.push({ year: i, amount: total });
+                }
+            } else if (currentMode === 'compuesto') {
+                for (let i = 1; i <= Math.min(years, 10); i++) {
+                    total = initial * Math.pow(1 + rate, i);
+                    yearlyData.push({ year: i, amount: total });
+                }
+            } else { // mensual
+                const monthlyContribution = initial / 10; // Simplified
+                total = initial;
+                for (let i = 1; i <= Math.min(years, 10); i++) {
+                    total = (total + monthlyContribution * 12) * (1 + rate);
+                    yearlyData.push({ year: i, amount: total });
+                }
+            }
+
+            const finalAmount = yearlyData[yearlyData.length - 1].amount;
+            const gains = finalAmount - initial;
+            const gainsPercent = ((gains / initial) * 100).toFixed(1);
+
+            // Update results
+            document.getElementById('finalAmount').textContent = formatCurrency(finalAmount);
+            document.getElementById('finalDetail').textContent = `En ${years} ${years === 1 ? 'año' : 'años'}`;
+            document.getElementById('totalGains').textContent = formatCurrency(gains);
+            document.getElementById('gainsPercent').textContent = `+${gainsPercent}% de retorno`;
+            document.getElementById('annualReturn').textContent = (rate * 100).toFixed(1) + '%';
+
+            // Update chart
+            const maxAmount = Math.max(...yearlyData.map(d => d.amount));
+            const chartHTML = yearlyData.map(d => {
+                const height = (d.amount / maxAmount) * 100;
+                return `
+                    <div class="bar-group">
+                        <div class="bar" style="height: ${height}%">
+                            <div class="bar-value">${formatCurrency(d.amount)}</div>
+                        </div>
+                        <div class="bar-label">Año ${d.year}</div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('chartBars').innerHTML = chartHTML;
+
+            // Update breakdown
+            const breakdownHTML = yearlyData.map(d => `
+                <div class="breakdown-item">
+                    <span class="breakdown-label">Año ${d.year}</span>
+                    <span class="breakdown-value">${formatCurrency(d.amount)}</span>
+                </div>
+            `).join('');
+            document.getElementById('yearlyBreakdown').innerHTML = breakdownHTML;
+        }
+
+        function startInvestment() {
+            const initial = document.getElementById('initial').value;
+            const type = document.getElementById('investmentType').options[document.getElementById('investmentType').selectedIndex].text;
+
+            alert(`¡Excelente decisión! 💰\n\nInversión: ${formatCurrency(initial)}\nTipo: ${type}\n\nSerás redirigido al proceso de apertura de cuenta de inversión.`);
+        }
+
+        // Initialize
+        updateSimulation();
+    </script>
+</body>
+
+</html>
