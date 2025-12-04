@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizador de Seguros</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .quoter-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 560px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .header h1 {
+            color: #1e293b;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: #1e293b;
+        }
+
+        .tab.active {
+            background: white;
+            color: #3b82f6;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 8px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #334155;
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="email"],
+        select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%233b82f6' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            background: #f1f5f9;
+            border-color: #3b82f6;
+        }
+
+        .checkbox-item input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #3b82f6;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 12px;
+            color: #334155;
+        }
+
+        .quote-result {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 0;
+            color: white;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .quote-result.show {
+            display: block;
+        }
+
+        .quote-result h2 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .price-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .price-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .price-amount {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .price-period {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .coverage-list {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .coverage-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .coverage-list li:last-child {
+            border-bottom: none;
+        }
+
+        .coverage-name {
+            font-size: 12px;
+        }
+
+        .coverage-value {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            margin-top: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 10px;
+            background: white;
+            color: #3b82f6;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 12px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 640px) {
+            .quoter-container {
+                padding: 24px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .price-amount {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="quoter-container">
+        <div class="header">
+            <h1>🛡️ Cotizador de Seguros</h1>
+        </div>
+
+        <div class="tabs">
+                    <button class="tab active" onclick="switchTab('auto')">🚗 Auto</button>
+                    <button class="tab" onclick="switchTab('vida')">💙 Vida</button>
+                    <button class="tab" onclick="switchTab('hogar')">🏠 Hogar</button>
+                </div>
+
+                <!-- Seguro de Auto -->
+                <div id="auto-section" class="form-section active">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Marca del vehículo</label>
+                            <select id="auto-brand">
+                                <option value="toyota">Toyota</option>
+                                <option value="honda">Honda</option>
+                                <option value="nissan">Nissan</option>
+                                <option value="mazda">Mazda</option>
+                                <option value="volkswagen">Volkswagen</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Modelo</label>
+                            <input type="text" id="auto-model" placeholder="Ej: Corolla">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Año</label>
+                            <input type="number" id="auto-year" value="2023" min="1990" max="2025">
+                        </div>
+                        <div class="form-group">
+                            <label>Valor del vehículo</label>
+                            <input type="number" id="auto-value" placeholder="$250,000" value="250000">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Coberturas adicionales</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="robo" checked>
+                                <label for="robo">Robo total</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="colision" checked>
+                                <label for="colision">Colisión</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cristales">
+                                <label for="cristales">Cristales</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="asistencia" checked>
+                                <label for="asistencia">Asistencia vial</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" onclick="calculateQuote('auto')">
+                        Calcular Cotización
+                    </button>
+                </div>
+
+                <!-- Seguro de Vida -->
+                <div id="vida-section" class="form-section">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Edad</label>
+                            <input type="number" id="vida-age" value="35" min="18" max="80">
+                        </div>
+                        <div class="form-group">
+                            <label>Sexo</label>
+                            <select id="vida-gender">
+                                <option value="masculino">Masculino</option>
+                                <option value="femenino">Femenino</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Suma asegurada</label>
+                        <select id="vida-coverage">
+                            <option value="500000">$500,000</option>
+                            <option value="1000000">$1,000,000</option>
+                            <option value="2000000">$2,000,000</option>
+                            <option value="5000000">$5,000,000</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>¿Fumas?</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="radio" id="fuma-no" name="smoker" value="no" checked>
+                                <label for="fuma-no">No</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="radio" id="fuma-si" name="smoker" value="si">
+                                <label for="fuma-si">Sí</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" onclick="calculateQuote('vida')">
+                        Calcular Cotización
+                    </button>
+                </div>
+
+                <!-- Seguro de Hogar -->
+                <div id="hogar-section" class="form-section">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tipo de propiedad</label>
+                            <select id="hogar-type">
+                                <option value="casa">Casa</option>
+                                <option value="departamento">Departamento</option>
+                                <option value="condominio">Condominio</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Valor de la propiedad</label>
+                            <input type="number" id="hogar-value" placeholder="$2,000,000" value="2000000">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Coberturas incluidas</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="incendio" checked>
+                                <label for="incendio">Incendio</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="robo-hogar" checked>
+                                <label for="robo-hogar">Robo</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="terremoto">
+                                <label for="terremoto">Terremoto</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="inundacion">
+                                <label for="inundacion">Inundación</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" onclick="calculateQuote('hogar')">
+                        Calcular Cotización
+                    </button>
+                </div>
+
+        <!-- RESULTADOS -->
+        <div id="quote-result" class="quote-result">
+            <h2>💎 Tu Cotización Personalizada</h2>
+
+            <div class="price-card">
+                <div class="price-label">Prima mensual</div>
+                <div class="price-amount" id="monthly-price">$1,250</div>
+                <div class="price-period">Pago mensual con cargo automático</div>
+            </div>
+
+            <ul class="coverage-list" id="coverage-details">
+                <!-- Se llenará dinámicamente -->
+            </ul>
+
+            <button class="btn-secondary" onclick="contractInsurance()">
+                Contratar Seguro
+            </button>
+            <button class="btn-secondary" onclick="hideQuote()">
+                Modificar Cotización
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'auto';
+
+        function switchTab(tab) {
+            // Actualizar tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Actualizar secciones
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`${tab}-section`).classList.add('active');
+
+            currentTab = tab;
+            hideQuote();
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-MX', {
+                style: 'currency',
+                currency: 'MXN',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function calculateQuote(type) {
+            let monthlyPrice = 0;
+            let coverages = [];
+
+            if (type === 'auto') {
+                const value = parseFloat(document.getElementById('auto-value').value) || 250000;
+                const year = parseInt(document.getElementById('auto-year').value) || 2023;
+                const age = 2025 - year;
+
+                // Precio base (3% del valor anual / 12)
+                monthlyPrice = (value * 0.03) / 12;
+
+                // Ajustar por edad del vehículo
+                monthlyPrice += age * 50;
+
+                coverages = [
+                    { name: 'Responsabilidad civil', value: '$5,000,000' },
+                    { name: 'Daños materiales', value: formatCurrency(value) }
+                ];
+
+                if (document.getElementById('robo').checked) {
+                    coverages.push({ name: 'Robo total', value: formatCurrency(value) });
+                    monthlyPrice += 200;
+                }
+                if (document.getElementById('colision').checked) {
+                    coverages.push({ name: 'Colisión', value: formatCurrency(value * 0.8) });
+                    monthlyPrice += 300;
+                }
+                if (document.getElementById('cristales').checked) {
+                    coverages.push({ name: 'Cristales', value: '$15,000' });
+                    monthlyPrice += 100;
+                }
+                if (document.getElementById('asistencia').checked) {
+                    coverages.push({ name: 'Asistencia vial 24/7', value: 'Incluida' });
+                    monthlyPrice += 150;
+                }
+
+            } else if (type === 'vida') {
+                const age = parseInt(document.getElementById('vida-age').value) || 35;
+                const coverage = parseInt(document.getElementById('vida-coverage').value);
+                const smoker = document.querySelector('input[name="smoker"]:checked').value === 'si';
+
+                // Precio base por edad
+                monthlyPrice = (coverage / 1000) * (age / 10);
+
+                if (smoker) monthlyPrice *= 1.5;
+
+                coverages = [
+                    { name: 'Muerte accidental', value: formatCurrency(coverage) },
+                    { name: 'Muerte natural', value: formatCurrency(coverage) },
+                    { name: 'Invalidez total', value: formatCurrency(coverage * 0.5) },
+                    { name: 'Gastos funerarios', value: '$50,000' }
+                ];
+
+            } else if (type === 'hogar') {
+                const value = parseFloat(document.getElementById('hogar-value').value) || 2000000;
+
+                // Precio base (0.5% del valor anual / 12)
+                monthlyPrice = (value * 0.005) / 12;
+
+                coverages = [
+                    { name: 'Estructura', value: formatCurrency(value) },
+                    { name: 'Contenidos', value: formatCurrency(value * 0.3) }
+                ];
+
+                if (document.getElementById('incendio').checked) {
+                    coverages.push({ name: 'Incendio', value: formatCurrency(value) });
+                    monthlyPrice += 150;
+                }
+                if (document.getElementById('robo-hogar').checked) {
+                    coverages.push({ name: 'Robo', value: formatCurrency(value * 0.3) });
+                    monthlyPrice += 200;
+                }
+                if (document.getElementById('terremoto').checked) {
+                    coverages.push({ name: 'Terremoto', value: formatCurrency(value * 0.7) });
+                    monthlyPrice += 400;
+                }
+                if (document.getElementById('inundacion').checked) {
+                    coverages.push({ name: 'Inundación', value: formatCurrency(value * 0.5) });
+                    monthlyPrice += 250;
+                }
+            }
+
+            // Mostrar resultado
+            document.getElementById('monthly-price').textContent = formatCurrency(monthlyPrice);
+
+            const coverageList = document.getElementById('coverage-details');
+            coverageList.innerHTML = '';
+            coverages.forEach(coverage => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span class="coverage-name">${coverage.name}</span>
+                    <span class="coverage-value">${coverage.value}</span>
+                `;
+                coverageList.appendChild(li);
+            });
+
+            document.getElementById('quote-result').classList.add('show');
+        }
+
+        function hideQuote() {
+            document.getElementById('quote-result').classList.remove('show');
+        }
+
+        function contractInsurance() {
+            const price = document.getElementById('monthly-price').textContent;
+            alert(`¡Excelente decisión! 🎉\n\nTu seguro de ${currentTab} por ${price}/mes está listo para contratarse.\n\nUn asesor se comunicará contigo en las próximas horas para finalizar el proceso.`);
+        }
+    </script>
+</body>
+
+</html>
