@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Send, Bot, User, MessageCircle, Minimize2 } from 'lucide-react';
 import { useChat } from '@/contexts/ChatContext';
-import { startAutoScroll } from '@/lib/autoScroll';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -23,7 +22,6 @@ export default function FloatingChat() {
   const { messages: contextMessages, isOpen, setIsOpen, addMessage } = useChat();
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isAutoScrolling, setIsAutoScrolling] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Convertir mensajes del contexto al formato esperado
@@ -130,42 +128,24 @@ export default function FloatingChat() {
 
       // Determine navigation target: prioritize navigationIntent, then component-based navigation
       let navigationTarget: string | null = null;
-      let shouldAutoScroll = false;
 
       if (data.navigationIntent?.action === 'navigate' && data.navigationIntent.target) {
         // API explicitly requested navigation
         navigationTarget = data.navigationIntent.target;
-        shouldAutoScroll = !data.navigationIntent.target.includes('#');
       } else if (components.length > 0) {
         // Component detected - navigate to corresponding page
         const componentName = components[0].name;
         navigationTarget = componentToUrl[componentName];
-        shouldAutoScroll = true; // Auto-scroll when navigating via component
       }
 
       // Execute navigation if target determined
       if (navigationTarget) {
         setTimeout(() => {
           router.push(navigationTarget);
-
-          if (shouldAutoScroll) {
-            // Start auto-scroll tour after navigation
-            setTimeout(() => {
-              setIsAutoScrolling(true);
-              startAutoScroll({
-                duration: 3700,
-                pauseAtEnd: 1500,
-                delay: 500,
-                onComplete: () => {
-                  setIsAutoScrolling(false);
-                }
-              });
-            }, 500);
-          }
         }, 1000);
       }
 
-      // Handle form filling separately
+      // Handle form filling
       if (data.navigationIntent?.action === 'fillForm' && data.formData) {
         setTimeout(() => {
           router.push(data.navigationIntent.target);
@@ -205,8 +185,7 @@ export default function FloatingChat() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className={`fixed bottom-6 right-6 w-full max-w-4xl h-[720px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200 transition-all duration-500 ${isAutoScrolling ? 'opacity-40 backdrop-blur-sm' : 'opacity-100'
-          }`}>
+        <div className="fixed bottom-6 right-6 w-full max-w-4xl h-[720px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200">
           {/* Header */}
           <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-t-2xl">
             <div className="flex items-center justify-between">
