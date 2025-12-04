@@ -13,6 +13,11 @@ interface Message {
   navigationIntent?: any;
 }
 
+interface ComponentData {
+  name: string;
+  params: string;
+}
+
 export default function FloatingChat() {
   const router = useRouter();
   const { messages: contextMessages, isOpen, setIsOpen, addMessage } = useChat();
@@ -35,6 +40,47 @@ export default function FloatingChat() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Función para detectar componentes en el texto
+  const detectComponents = (text: string): { cleanText: string; components: ComponentData[] } => {
+    const componentRegex = /\[MOSTRAR:\s*([a-z-]+)(\?[^\]]+)?\]/gi;
+    const components: ComponentData[] = [];
+    let cleanText = text;
+
+    const matches = text.matchAll(componentRegex);
+    for (const match of matches) {
+      components.push({
+        name: match[1],
+        params: match[2] || ''
+      });
+      cleanText = cleanText.replace(match[0], '');
+    }
+
+    return { cleanText: cleanText.trim(), components };
+  };
+
+  // Función para renderizar un mensaje con posibles componentes
+  const renderMessageContent = (message: Message) => {
+    const { cleanText, components } = detectComponents(message.content);
+
+    return (
+      <>
+        {cleanText && (
+          <p className="text-sm whitespace-pre-wrap mb-2">{cleanText}</p>
+        )}
+        {components.map((component, idx) => (
+          <div key={idx} className="mt-3 rounded-lg overflow-hidden shadow-lg">
+            <iframe
+              src={`/components/${component.name}.html${component.params}`}
+              className="w-full h-[500px] border-0"
+              title={component.name}
+              sandbox="allow-scripts allow-same-origin"
+            />
+          </div>
+        ))}
+      </>
+    );
+  };
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -86,7 +132,7 @@ export default function FloatingChat() {
               setTimeout(() => {
                 setIsAutoScrolling(true);
                 startAutoScroll({
-                  duration: 11000, // 11 seconds tour (1/3 slower)
+                  duration: 3700, // 3x más rápido (antes 11000ms)
                   pauseAtEnd: 1500,
                   delay: 500,
                   onComplete: () => {
@@ -137,7 +183,7 @@ export default function FloatingChat() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className={`fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200 transition-all duration-500 ${isAutoScrolling ? 'opacity-40 backdrop-blur-sm' : 'opacity-100'
+        <div className={`fixed bottom-6 right-6 w-full max-w-5xl h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200 transition-all duration-500 ${isAutoScrolling ? 'opacity-40 backdrop-blur-sm' : 'opacity-100'
           }`}>
           {/* Header */}
           <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-t-2xl">
@@ -189,7 +235,7 @@ export default function FloatingChat() {
                     : 'bg-white text-gray-900 shadow-sm border border-gray-200'
                     }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  {renderMessageContent(message)}
                 </div>
               </div>
             ))}
