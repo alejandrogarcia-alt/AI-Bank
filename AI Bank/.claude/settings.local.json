@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.banorte.com)",
+      "Bash(mkdir:*)",
+      "Bash(npm install:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit: Multiplica Bank - Banca Digital Inteligente\n\n- Sitio bancario completo con navegación de 3 niveles\n- Chat flotante con IA (Google Gemini)\n- Navegación inteligente asistida por IA\n- Pre-llenado de formularios desde el chat\n- Secciones: Cuentas, Créditos, Tarjetas, Inversiones, Seguros\n- Diseño responsive con Tailwind CSS\n- Calculadora de crédito interactiva\n- Configuración lista para deploy en Render\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(npm run dev:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd deployment guide for Render\n\n- Complete step-by-step instructions for deploying to Render\n- Environment variables configuration\n- Troubleshooting guide\n- Auto-deploy setup from GitHub\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(lsof:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(git commit:*)",
+      "Bash(git stash:*)",
+      "Bash(curl:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
