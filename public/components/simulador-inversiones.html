@@ -26,11 +26,11 @@
         .simulator-container {
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 40px;
+            border-radius: 16px;
+            padding: 20px;
             max-width: 900px;
             width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             animation: slideUp 0.5s ease-out;
         }
 
@@ -48,14 +48,14 @@
 
         .header {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 8px;
         }
 
         .header h1 {
             color: #1e293b;
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .header p {
@@ -65,22 +65,22 @@
 
         .tabs {
             display: flex;
-            gap: 12px;
-            margin-bottom: 32px;
+            gap: 8px;
+            margin-bottom: 12px;
             background: #f1f5f9;
-            padding: 6px;
-            border-radius: 12px;
+            padding: 4px;
+            border-radius: 8px;
         }
 
         .tab {
             flex: 1;
-            padding: 12px 16px;
+            padding: 8px 12px;
             border: none;
             background: transparent;
             color: #64748b;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -96,23 +96,36 @@
         }
 
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 8px;
         }
 
         .form-group label {
             display: block;
             color: #2d3748;
             font-weight: 600;
-            margin-bottom: 12px;
-            font-size: 14px;
+            margin-bottom: 4px;
+            font-size: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            align-items: start;
+        }
+
+        @media (max-width: 480px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .label-value {
             color: #11998e;
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 700;
         }
 
@@ -123,6 +136,7 @@
             background: linear-gradient(to right, #11998e 0%, #11998e var(--value), #e2e8f0 var(--value), #e2e8f0 100%);
             outline: none;
             -webkit-appearance: none;
+            appearance: none;
             transition: all 0.3s ease;
         }
 
@@ -144,10 +158,10 @@
 
         select {
             width: 100%;
-            padding: 14px 16px;
+            padding: 8px 12px;
             border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 12px;
             font-family: 'Inter', sans-serif;
             color: #2d3748;
             background-color: white;
@@ -168,9 +182,9 @@
 
         .chart-container {
             background: white;
-            border-radius: 16px;
-            padding: 24px;
-            margin: 24px 0;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 0 0 12px 0;
             border: 2px solid #e2e8f0;
         }
 
@@ -184,9 +198,9 @@
         .bar-container {
             display: flex;
             align-items: flex-end;
-            height: 200px;
-            gap: 8px;
-            padding-bottom: 10px;
+            height: 120px;
+            gap: 4px;
+            padding-bottom: 5px;
         }
 
         .bar-group {
@@ -208,10 +222,10 @@
 
         .bar-value {
             position: absolute;
-            top: -25px;
+            top: -20px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 700;
             color: #11998e;
             white-space: nowrap;
@@ -225,48 +239,54 @@
 
         .results-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+            margin-top: 12px;
         }
 
         .result-card {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            border-radius: 16px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 12px;
             color: white;
         }
 
         .result-card-label {
-            font-size: 12px;
+            font-size: 10px;
             opacity: 0.9;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .result-card-value {
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 700;
         }
 
         .result-card-detail {
-            font-size: 13px;
+            font-size: 11px;
             opacity: 0.8;
-            margin-top: 8px;
+            margin-top: 4px;
         }
 
         .breakdown {
             background: #f8fafc;
-            border-radius: 16px;
-            padding: 24px;
-            margin-top: 24px;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 16px;
+        }
+
+        #yearlyBreakdown {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
 
         .breakdown h3 {
             color: #1e293b;
-            font-size: 16px;
-            margin-bottom: 16px;
+            font-size: 14px;
+            margin-bottom: 8px;
             font-weight: 600;
         }
 
@@ -274,38 +294,36 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .breakdown-item:last-child {
-            border-bottom: none;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
         }
 
         .breakdown-label {
             color: #475569;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .breakdown-value {
             color: #1e293b;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 13px;
         }
 
         .btn-primary {
             width: 100%;
-            padding: 16px;
+            padding: 12px;
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
-            margin-top: 24px;
+            margin-top: 16px;
         }
 
         .btn-primary:hover {
@@ -329,77 +347,86 @@
     <div class="simulator-container">
         <div class="header">
             <h1>📈 Simulador de Inversiones</h1>
-            <p>Proyecta el crecimiento de tu dinero</p>
         </div>
 
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('simple')">Interés Simple</button>
-            <button class="tab" onclick="switchTab('compuesto')">Interés Compuesto</button>
-            <button class="tab" onclick="switchTab('mensual')">Ahorro Mensual</button>
-        </div>
+        <div class="content-grid">
+            <!-- COLUMNA IZQUIERDA: RESULTADOS -->
+            <div>
+                <div class="chart-container">
+                    <h3 style="color: #1e293b; font-size: 16px; margin-bottom: 12px;">Proyección de crecimiento</h3>
+                    <div class="bar-container" id="chartBars">
+                        <!-- Bars will be generated dynamically -->
+                    </div>
+                </div>
 
-        <!-- Interés Simple -->
-        <div id="simple-section" class="tab-content">
-            <div class="form-group">
-                <label>
-                    <span>Inversión inicial</span>
-                    <span class="label-value" id="initialDisplay">$50,000</span>
-                </label>
-                <input type="range" id="initial" min="10000" max="1000000" step="10000" value="50000"
-                    style="--value: 4%" oninput="updateSimulation()">
-            </div>
+                <div class="results-grid">
+                    <div class="result-card">
+                        <div class="result-card-label">Total al final</div>
+                        <div class="result-card-value" id="finalAmount">$70,000</div>
+                        <div class="result-card-detail" id="finalDetail">En 5 años</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-card-label">Ganancias totales</div>
+                        <div class="result-card-value" id="totalGains">$20,000</div>
+                        <div class="result-card-detail" id="gainsPercent">+40% de retorno</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-card-label">Rendimiento anual</div>
+                        <div class="result-card-value" id="annualReturn">8%</div>
+                        <div class="result-card-detail">Promedio estimado</div>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label>
-                    <span>Tasa de interés anual</span>
-                    <span class="label-value" id="rateDisplay">8%</span>
-                </label>
-                <input type="range" id="rate" min="1" max="25" step="0.5" value="8" style="--value: 29%"
-                    oninput="updateSimulation()">
-            </div>
-
-            <div class="form-group">
-                <label>
-                    <span>Plazo</span>
-                    <span class="label-value" id="periodDisplay">5 años</span>
-                </label>
-                <input type="range" id="period" min="1" max="30" step="1" value="5" style="--value: 13%"
-                    oninput="updateSimulation()">
             </div>
 
-            <div class="form-group">
-                <label>Tipo de inversión</label>
-                <select id="investmentType" onchange="updateSimulation()">
-                    <option value="cetes">CETES - Bajo riesgo</option>
-                    <option value="fondos">Fondos de inversión - Riesgo medio</option>
-                    <option value="acciones">Acciones - Alto riesgo</option>
-                    <option value="mixto">Portafolio mixto</option>
-                </select>
-            </div>
-        </div>
 
-        <div class="chart-container">
-            <h3 style="color: #1e293b; font-size: 16px; margin-bottom: 12px;">Proyección de crecimiento</h3>
-            <div class="bar-container" id="chartBars">
-                <!-- Bars will be generated dynamically -->
-            </div>
-        </div>
+            <!-- COLUMNA DERECHA: INPUTS -->
+            <div>
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('simple')">Interés Simple</button>
+                    <button class="tab" onclick="switchTab('compuesto')">Interés Compuesto</button>
+                    <button class="tab" onclick="switchTab('mensual')">Ahorro Mensual</button>
+                </div>
 
-        <div class="results-grid">
-            <div class="result-card">
-                <div class="result-card-label">Total al final</div>
-                <div class="result-card-value" id="finalAmount">$70,000</div>
-                <div class="result-card-detail" id="finalDetail">En 5 años</div>
-            </div>
-            <div class="result-card">
-                <div class="result-card-label">Ganancias totales</div>
-                <div class="result-card-value" id="totalGains">$20,000</div>
-                <div class="result-card-detail" id="gainsPercent">+40% de retorno</div>
-            </div>
-            <div class="result-card">
-                <div class="result-card-label">Rendimiento anual</div>
-                <div class="result-card-value" id="annualReturn">8%</div>
-                <div class="result-card-detail">Promedio estimado</div>
+                <!-- Interés Simple -->
+                <div id="simple-section" class="tab-content">
+                    <div class="form-group">
+                        <label>
+                            <span>Inversión inicial</span>
+                            <span class="label-value" id="initialDisplay">$50,000</span>
+                        </label>
+                        <input type="range" id="initial" min="10000" max="1000000" step="10000" value="50000"
+                            style="--value: 4%" oninput="updateSimulation()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <span>Tasa de interés anual</span>
+                            <span class="label-value" id="rateDisplay">8%</span>
+                        </label>
+                        <input type="range" id="rate" min="1" max="25" step="0.5" value="8" style="--value: 29%"
+                            oninput="updateSimulation()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <span>Plazo</span>
+                            <span class="label-value" id="periodDisplay">5 años</span>
+                        </label>
+                        <input type="range" id="period" min="1" max="30" step="1" value="5" style="--value: 13%"
+                            oninput="updateSimulation()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tipo de inversión</label>
+                        <select id="investmentType" onchange="updateSimulation()">
+                            <option value="cetes">CETES - Bajo riesgo</option>
+                            <option value="fondos">Fondos de inversión - Riesgo medio</option>
+                            <option value="acciones">Acciones - Alto riesgo</option>
+                            <option value="mixto">Portafolio mixto</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
 

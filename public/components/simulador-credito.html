@@ -46,54 +46,7 @@
             }
         }
 
-        .product-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            padding: 10px 14px;
-            margin-bottom: 16px;
-            color: white;
-            display: none;
-        }
 
-        .product-badge.show {
-            display: block;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        .product-badge-title {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            opacity: 0.9;
-            margin-bottom: 4px;
-        }
-
-        .product-badge-name {
-            font-size: 15px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .product-badge-details {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            font-size: 11px;
-        }
-
-        .product-badge-detail {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .product-badge-detail-label {
-            opacity: 0.8;
-        }
-
-        .product-badge-detail-value {
-            font-weight: 700;
-        }
 
         .header {
             text-align: center;
@@ -120,14 +73,14 @@
             align-items: start;
         }
 
-        @media (max-width: 700px) {
+        @media (max-width: 600px) {
             .content-grid {
                 grid-template-columns: 1fr;
             }
         }
 
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 12px;
         }
 
         .form-group label {
@@ -332,30 +285,37 @@
 
 <body>
     <div class="simulator-container">
-        <!-- Product Badge -->
-        <div id="productBadge" class="product-badge">
-            <div class="product-badge-title">Simulando</div>
-            <div class="product-badge-name" id="productName">Crédito Personal Multiplica Exprés</div>
-            <div class="product-badge-details">
-                <div class="product-badge-detail">
-                    <span class="product-badge-detail-label">Tasa:</span>
-                    <span class="product-badge-detail-value" id="productRate">18.9% anual</span>
-                </div>
-                <div class="product-badge-detail">
-                    <span class="product-badge-detail-label">Tipo:</span>
-                    <span class="product-badge-detail-value" id="productType">Personal</span>
-                </div>
-            </div>
-        </div>
+
 
         <div class="header">
             <h1>💰 Simulador de Crédito</h1>
-            <p>Calcula tu préstamo ideal en segundos</p>
         </div>
 
         <!-- GRID DE 2 COLUMNAS -->
         <div class="content-grid">
-            <!-- COLUMNA IZQUIERDA: INPUTS -->
+            <!-- COLUMNA IZQUIERDA: RESULTADOS EN TABLA -->
+            <div>
+                <div class="results-panel">
+                    <h2>📊 Resumen de tu crédito</h2>
+
+                    <table class="results-table">
+                        <tr>
+                            <td>Pago mensual</td>
+                            <td id="monthlyPayment">$4,707</td>
+                        </tr>
+                        <tr>
+                            <td>Total de intereses</td>
+                            <td id="totalInterest">$12,968</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>Total a pagar</td>
+                            <td id="totalPayment">$112,968</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: INPUTS -->
             <div>
                 <form id="creditForm">
                     <div class="form-group">
@@ -390,32 +350,10 @@
                     </div>
                 </form>
             </div>
-
-            <!-- COLUMNA DERECHA: RESULTADOS EN TABLA -->
-            <div>
-                <div class="results-panel">
-                    <h2>📊 Resumen de tu crédito</h2>
-
-                    <table class="results-table">
-                        <tr>
-                            <td>Pago mensual</td>
-                            <td id="monthlyPayment">$4,707</td>
-                        </tr>
-                        <tr>
-                            <td>Total de intereses</td>
-                            <td id="totalInterest">$12,968</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td>Total a pagar</td>
-                            <td id="totalPayment">$112,968</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
         </div>
 
         <!-- TIPO DE CRÉDITO Y BOTÓN (ANCHO COMPLETO) -->
-        <div class="form-group" style="margin-top: 24px;">
+        <div class="form-group" style="margin-top: 8px;">
             <label>Tipo de crédito</label>
             <div class="select-wrapper">
                 <select id="creditType">
@@ -444,10 +382,7 @@
         const monthlyPaymentEl = document.getElementById('monthlyPayment');
         const totalInterestEl = document.getElementById('totalInterest');
         const totalPaymentEl = document.getElementById('totalPayment');
-        const productBadge = document.getElementById('productBadge');
-        const productName = document.getElementById('productName');
-        const productRate = document.getElementById('productRate');
-        const productType = document.getElementById('productType');
+
 
         // Catálogo de productos de crédito
         const creditProducts = {
@@ -497,14 +432,7 @@
             };
         }
 
-        // Función para actualizar el badge del producto
-        function updateProductBadge(type) {
-            const product = creditProducts[type] || creditProducts['personal'];
-            productName.textContent = product.name;
-            productRate.textContent = `${product.rate}% anual`;
-            productType.textContent = product.type;
-            productBadge.classList.add('show');
-        }
+
 
         // Función para formatear moneda
         function formatCurrency(amount) {
@@ -574,8 +502,7 @@
             rateDisplay.textContent = `${product.rate}%`;
             updateSliderGradient(rateSlider);
 
-            // Actualizar badge
-            updateProductBadge(creditType);
+
 
             calculatePayment();
         });
@@ -631,16 +558,7 @@
                 }
             }
 
-            // Mostrar badge si hay parámetros
-            if (urlParams.type || urlParams.productName) {
-                const creditType = urlParams.type || 'personal';
-                updateProductBadge(creditType);
 
-                // Sobrescribir nombre del producto si viene en URL
-                if (urlParams.productName) {
-                    productName.textContent = decodeURIComponent(urlParams.productName);
-                }
-            }
 
             // Actualizar gradientes
             updateSliderGradient(amountSlider);
