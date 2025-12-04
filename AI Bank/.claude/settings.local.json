@@ -16,7 +16,9 @@
       "Bash(npm uninstall:*)",
       "Bash(git commit:*)",
       "Bash(git stash:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git pull:*)",
+      "Bash(git remote set-url:*)"
     ],
     "deny": [],
     "ask": []
