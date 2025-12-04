@@ -116,7 +116,7 @@ export default function FloatingChat() {
         content: data.response,
       });
 
-      // Handle navigation
+      // Handle navigation from API response (ONLY through navigationIntent, not components)
       if (data.navigationIntent) {
         if (data.navigationIntent.action === 'navigate' && data.navigationIntent.target) {
           // Wait 1 second before navigating so user can see the response
