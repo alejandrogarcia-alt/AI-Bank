@@ -183,7 +183,7 @@ export default function FloatingChat() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className={`fixed bottom-6 right-6 w-full max-w-5xl h-[600px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200 transition-all duration-500 ${isAutoScrolling ? 'opacity-40 backdrop-blur-sm' : 'opacity-100'
+        <div className={`fixed bottom-6 right-6 w-full max-w-3xl h-[720px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 border border-gray-200 transition-all duration-500 ${isAutoScrolling ? 'opacity-40 backdrop-blur-sm' : 'opacity-100'
           }`}>
           {/* Header */}
           <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-t-2xl">
