@@ -41,6 +41,15 @@ export default function FloatingChat() {
     scrollToBottom();
   }, [messages]);
 
+  // Mapeo de componentes a URLs del sitio
+  const componentToUrl: Record<string, string> = {
+    'simulador-inversiones': '/inversiones',
+    'simulador-credito': '/creditos',
+    'comparador-tarjetas': '/tarjetas',
+    'conversor-divisas': '/servicios',
+    'cotizador-seguros': '/seguros',
+  };
+
   // Función para detectar componentes en el texto
   const detectComponents = (text: string): { cleanText: string; components: ComponentData[] } => {
     const componentRegex = /\[MOSTRAR:\s*([a-z-]+)(\?[^\]]+)?\]/gi;
@@ -116,39 +125,52 @@ export default function FloatingChat() {
         content: data.response,
       });
 
-      // Handle navigation from API response (ONLY through navigationIntent, not components)
-      if (data.navigationIntent) {
-        if (data.navigationIntent.action === 'navigate' && data.navigationIntent.target) {
-          // Wait 1 second before navigating so user can see the response
-          setTimeout(() => {
-            router.push(data.navigationIntent.target);
+      // Detect components in response for navigation
+      const { components } = detectComponents(data.response);
 
-            // Only start auto-scroll if URL doesn't have an anchor/hash
-            // If there's an anchor, user wants to go to a specific section
-            const hasAnchor = data.navigationIntent.target.includes('#');
+      // Determine navigation target: prioritize navigationIntent, then component-based navigation
+      let navigationTarget: string | null = null;
+      let shouldAutoScroll = false;
 
-            if (!hasAnchor) {
-              // Start auto-scroll tour after navigation
-              setTimeout(() => {
-                setIsAutoScrolling(true);
-                startAutoScroll({
-                  duration: 3700, // 3x más rápido (antes 11000ms)
-                  pauseAtEnd: 1500,
-                  delay: 500,
-                  onComplete: () => {
-                    setIsAutoScrolling(false);
-                  }
-                });
-              }, 500);
-            }
-          }, 1000);
-        } else if (data.navigationIntent.action === 'fillForm' && data.formData) {
-          // Navigate to the form with data
-          setTimeout(() => {
-            router.push(data.navigationIntent.target);
-            // TODO: Pass form data via URL params or localStorage
-          }, 1000);
-        }
+      if (data.navigationIntent?.action === 'navigate' && data.navigationIntent.target) {
+        // API explicitly requested navigation
+        navigationTarget = data.navigationIntent.target;
+        shouldAutoScroll = !data.navigationIntent.target.includes('#');
+      } else if (components.length > 0) {
+        // Component detected - navigate to corresponding page
+        const componentName = components[0].name;
+        navigationTarget = componentToUrl[componentName];
+        shouldAutoScroll = true; // Auto-scroll when navigating via component
+      }
+
+      // Execute navigation if target determined
+      if (navigationTarget) {
+        setTimeout(() => {
+          router.push(navigationTarget);
+
+          if (shouldAutoScroll) {
+            // Start auto-scroll tour after navigation
+            setTimeout(() => {
+              setIsAutoScrolling(true);
+              startAutoScroll({
+                duration: 3700,
+                pauseAtEnd: 1500,
+                delay: 500,
+                onComplete: () => {
+                  setIsAutoScrolling(false);
+                }
+              });
+            }, 500);
+          }
+        }, 1000);
+      }
+
+      // Handle form filling separately
+      if (data.navigationIntent?.action === 'fillForm' && data.formData) {
+        setTimeout(() => {
+          router.push(data.navigationIntent.target);
+          // TODO: Pass form data via URL params or localStorage
+        }, 1000);
       }
     } catch (error) {
       console.error('Error sending message:', error);
